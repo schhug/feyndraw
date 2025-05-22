@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "FeynDraw"
+version = "1.0"
+dependencies = [
+    "matplotlib",
+    "numpy"
+]
+requires-python = ">= 3.0"
+authors = [
+    { name = "Hugo Schérer", email = "hugo.scherer@mail.mcgill.ca" }
+]
+description = "Drawing Feynman diagrams with matplotlib"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICEN[CS]E.*"]
+keywords = ["Feynman", "diagram", "draq", "physics", "particle"]
+classifiers = [
+  "Programming Language :: Python"
+]
+
+[project.urls]
+Repository = "https://github.com/yourusername/drawstuff"
