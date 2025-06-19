@@ -6,8 +6,7 @@ from .geometry import rotate
 
 # Blow at center c and radius r
 def blob(ax,c,r=0.2,lw=1):
-	ax.add_patch(mpatches.Circle(c,r,
-   		fill=True,hatch='\\\\\\\\',fc='0.8',ec='0',zorder=6,lw=lw))
+	ax.add_patch(mpatches.Circle(c,r,fill=True,hatch='\\\\\\\\',fc='0.8',ec='0',zorder=6,lw=lw))
 
 ### Oscillation ###
 

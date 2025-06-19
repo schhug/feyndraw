@@ -59,7 +59,7 @@ def arrow_momentum_arc(ax,p1,p2,h=0,b1=0.3,b2=0.3,H=0.2,ba=0.05,ha=0.05,lw=1,col
 	p2b = (cx + (r+H)*np.cos(theta_lim),cy + (r+H)*np.sin(theta_lim))
 	arrow_triangle(ax,p2b,theta_lim+phase,ba,ha)
 
-def line(ax,p1,p2,color='k',lw=1,ls='-',zorder=7):
+def line(ax,p1,p2,color='k',lw=1,ls='-',**kwargs):
 	x1,y1 = p1
 	x2,y2 = p2
-	ax.plot([x1,x2], [y1,y2],ls=ls,color=color,lw=lw,zorder=zorder)
+	ax.plot([x1,x2], [y1,y2],ls=ls,color=color,lw=lw,**kwargs)

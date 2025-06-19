@@ -26,6 +26,9 @@ def scalar_propagator(ax,p1,p2,arrw=False,color='k',lw=1,ls='--'):
 def fermion_propagator(ax,p1,p2,arrw=True,color='k',lw=1,ls='-'):
 	line_propagator(ax,p1,p2,arrw,color,lw,ls=ls)
 
+def antifermion_propagator(ax,p1,p2,arrw=True,color='k',lw=1,ls='-'):
+	line_propagator(ax,p2,p1,arrw,color,lw,ls=ls)
+
 ######################
 # Photons and Gluons #
 ######################
@@ -48,10 +51,10 @@ def ts_fs_gluon(ts_init,h,w):
 	return h*np.sin(ts_init*w*np.pi),h*np.cos(ts_init*w*np.pi)
 
 # Photon (wavy-line) propagator from point p1 to p2
-def photon_propagator(ax,p1,p2,h=0.07,w=12,color='k',lw=1):
+def photon_propagator(ax,p1,p2,h=0.07,w=12,color='k',lw=1,ls='-'):
 	parametric_propagator(ax,p1,p2,h,w,color,lw,ts_fs_photon)
 
 # Gluon (helix) propagator from point p1 to p2
-def gluon_propagator(ax,p1,p2,h=0.07,w=12,color='k',lw=1):
+def gluon_propagator(ax,p1,p2,h=0.07,w=12,color='k',lw=1,ls='-'):
 	parametric_propagator(ax,p1,p2,h,w,color,lw,ts_fs_gluon)
 
