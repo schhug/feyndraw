@@ -64,11 +64,11 @@ def line_loop(ax,c,r,nP=2,phase=0,color='k',lw=1,ls='-'):
 		theta = phase + i*2*np.pi/nP
 		arrow_triangle(ax,rotate(c,theta,cx,cy-r),theta)
 
-def scalar_loop(ax,c,r,nS=0,phase=0,color='k',lw=1):
-	line_loop(ax,c,r,nS,phase,color,lw,ls='--')
+def scalar_loop(ax,c,r,nS=0,phase=0,color='k',lw=1,ls='--'):
+	line_loop(ax,c,r,nS,phase,color,lw,ls=ls)
 
-def fermion_loop(ax,c,r,nF=2,phase=0,color='k',lw=1):
-	line_loop(ax,c,r,nF,phase,color,lw,ls='-')
+def fermion_loop(ax,c,r,nF=2,phase=0,color='k',lw=1,ls='-'):
+	line_loop(ax,c,r,nF,phase,color,lw,ls=ls)
 
 def gluon_loop(ax,c,r,h=0,dr=0.07,w=12,ls='-',lw=1,color='k'):
 	cx,cy = c

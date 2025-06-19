@@ -3,13 +3,13 @@ import matplotlib.patches as mpatches
 from .geometry import find_angle, find_length, find_center, rotate
 
 # Draw the triangle of an arrow
-def arrow_triangle(ax,c,theta,b=0.05,h=0.05):
+def arrow_triangle(ax,c,theta,b=0.05,h=0.05,color='k'):
 	cx,cy = c
 	ax.add_patch(mpatches.Polygon(
 			[[cx+h*np.cos(theta),cy+h*np.sin(theta)],
 			[cx-h*np.cos(theta)-b*np.sin(theta),cy-h*np.sin(theta)+b*np.cos(theta)],
 			[cx-h*np.cos(theta)+b*np.sin(theta),cy-h*np.sin(theta)-b*np.cos(theta)]],
-	   		closed=True,fill=True,fc='k',ec='k'))
+	   		closed=True,fill=True,fc=color,ec=color))
 
 # Draw an arrow with pointy end
 def arrow(ax,p1,p2,b=0.05,h=0.05,lw=1,color='k'):
@@ -17,7 +17,7 @@ def arrow(ax,p1,p2,b=0.05,h=0.05,lw=1,color='k'):
 	x2,y2 = p2
 	theta = find_angle(p1,p2)
 	ax.plot([x1,x2], [y1,y2], color=color, lw=lw)
-	arrow_triangle(ax,p2,theta,b,h)
+	arrow_triangle(ax,p2,theta,b,h,color)
 
 def arrow_momentum(ax,p1,p2,b1=0.2,b2=0.2,h=0.1,ba=0.05,ha=0.05,lw=1,color='k'):
 	theta = find_angle(p1,p2)
@@ -58,3 +58,8 @@ def arrow_momentum_arc(ax,p1,p2,h=0,b1=0.3,b2=0.3,H=0.2,ba=0.05,ha=0.05,lw=1,col
 		phase = 3*np.pi/2
 	p2b = (cx + (r+H)*np.cos(theta_lim),cy + (r+H)*np.sin(theta_lim))
 	arrow_triangle(ax,p2b,theta_lim+phase,ba,ha)
+
+def line(ax,p1,p2,color='k',lw=1,ls='-',zorder=7):
+	x1,y1 = p1
+	x2,y2 = p2
+	ax.plot([x1,x2], [y1,y2],ls=ls,color=color,lw=lw,zorder=zorder)

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.patches as mpatches
 from .geometry import find_angle, find_length, rotate
-from .basicdraw import arrow,arrow_triangle
+from .basicdraw import arrow,arrow_triangle,line
 
 ########################
 # Scalars and Fermions #
@@ -10,21 +10,21 @@ from .basicdraw import arrow,arrow_triangle
 # Straignt line propagator from point p1 to p2
 # Use this one for full customization
 def line_propagator(ax,p1,p2,arrw=False,color='k',lw=1,ls='-'):
-	x1,y1 = p1
-	x2,y2 = p2
-	ax.plot([x1,x2], [y1,y2],ls=ls,color=color,lw=lw)
+	line(ax,p1,p2,color,lw,ls)
 	if arrw:
+		x1,y1 = p1
+		x2,y2 = p2
 		theta = find_angle(p1,p2)
 		cx,cy = (x1+x2)/2,(y1+y2)/2
-		arrow_triangle(ax,(cx,cy),theta)
+		arrow_triangle(ax,(cx,cy),theta,color=color)
 
 # Dashed line, no arrow
-def scalar_propagator(ax,p1,p2,arrw=False,color='k',lw=1):
-	line_propagator(ax,p1,p2,arrw,color,lw,ls='--')
+def scalar_propagator(ax,p1,p2,arrw=False,color='k',lw=1,ls='--'):
+	line_propagator(ax,p1,p2,arrw,color,lw,ls=ls)
 
 # Full line, with arrow
-def fermion_propagator(ax,p1,p2,arrw=True,color='k',lw=1):
-	line_propagator(ax,p1,p2,arrw,color,lw,ls='-')
+def fermion_propagator(ax,p1,p2,arrw=True,color='k',lw=1,ls='-'):
+	line_propagator(ax,p1,p2,arrw,color,lw,ls=ls)
 
 ######################
 # Photons and Gluons #
