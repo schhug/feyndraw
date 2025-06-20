@@ -1,65 +1,97 @@
 import numpy as np
 import matplotlib.patches as mpatches
-from .geometry import find_angle, find_length, find_center, rotate
+from .geometry import numpyfy,find_angle, find_angles, find_arc_angle, find_length, find_point, find_center, rotate, rotate_points
+
+ba_def = 0.09
+ha_def = 0.1
+da_def = 0.02
+
+z_def_line = 1
+z_def_arrow = 3
+
+# Returns a paler color from the given color
+#   color: must be in format (r,g,b)
+def paler_color(color,fr=0.75):
+	dc = fr*(1-np.min(color))
+	return (np.clip(dc+color[0],0.0,1.0),np.clip(dc+color[1],0.0,1.0),np.clip(dc+color[2],0.0,1.0))
+
+
+# Draw a line between two points p1 and p2
+def line(ax,p1,p2,color='k',lw=1,ls='-',zorder=z_def_line):
+	x1,y1 = p1
+	x2,y2 = p2
+	ax.plot([x1,x2], [y1,y2],lw=lw,ls=ls,color=color,zorder=zorder)
 
 # Draw the triangle of an arrow
-def arrow_triangle(ax,c,theta,b=0.05,h=0.05,color='k'):
-	cx,cy = c
-	ax.add_patch(mpatches.Polygon(
-			[[cx+h*np.cos(theta),cy+h*np.sin(theta)],
-			[cx-h*np.cos(theta)-b*np.sin(theta),cy-h*np.sin(theta)+b*np.cos(theta)],
-			[cx-h*np.cos(theta)+b*np.sin(theta),cy-h*np.sin(theta)-b*np.cos(theta)]],
-	   		closed=True,fill=True,fc=color,ec=color))
+#   c: centroid of the triangle, format [cx,cy]
+#   theta: angle (counter-clockwise) of the arrow with respect to the x-axis
+#   b: base of the triangle
+#   h: height of the triangle
+#	d: distance between base and dip of the triangle
+def arrow_triangle(ax,c,theta=0,ba=ba_def,ha=ha_def,da=da_def,color='k',zorder=z_def_line):
+	c = numpyfy(c)
+	pts = c + [[2*ha/3,0],[-ha/3,ba/2],[-ha/3+da,0],[-ha/3,-ba/2]]
+	pts = rotate_points(c,theta,pts)
+	ax.add_patch(mpatches.Polygon(pts,closed=True,fill=True,fc=color,ec=color,joinstyle='round',zorder=zorder))
 
-# Draw an arrow with pointy end
-def arrow(ax,p1,p2,b=0.05,h=0.05,lw=1,color='k'):
+def arc_arrow_triangle(ax,p1,p2,dr=0,bp=0.5,ba=ba_def,ha=ha_def,da=da_def,color='k',zorder=z_def_line,clockwise=False):
+	phase = np.pi/2
+	if clockwise: p1,p2, phase = p2,p1,3*np.pi/2
+	else: phase = np.pi/2
+	c = find_center(p1,p2,dr)
+	theta1, theta2 = find_angles(c,p1,p2)
+	theta= bp*(theta2-theta1)
+	arrow_triangle(ax,rotate_points(c,theta,p1),theta=phase+theta1+theta,ba=ba,ha=ha,da=da,color=color,zorder=zorder)
+
+# Draw an arrow with pointy end from point p1 to p2
+#   b, h, d: see arrow_triangle()
+def arrow(ax,p1,p2,ba=ba_def,ha=ha_def,da=da_def,color='k',lw=1,zorder=z_def_arrow):
 	x1,y1 = p1
 	x2,y2 = p2
 	theta = find_angle(p1,p2)
-	ax.plot([x1,x2], [y1,y2], color=color, lw=lw)
-	arrow_triangle(ax,p2,theta,b,h,color)
+	line(ax,p1,p2,color='k',lw=lw,zorder=zorder)
+	arrow_triangle(ax,p2,theta=theta,ba=ba,ha=ha,da=da,color=color,zorder=zorder)
 
-def arrow_momentum(ax,p1,p2,b1=0.2,b2=0.2,h=0.1,ba=0.05,ha=0.05,lw=1,color='k'):
+# Draw an arrow with pointy end over a linear propagator going from p1 to p2
+#   b1, b2: fraction of the propagator length to clip at p1 and p2, respectively
+#   h: height between the arrow and the propagator joining p1 and p2; can be negative
+#   ba, ha, da: see arrow_triangle()
+def arrow_momentum(ax,p1,p2,b1=0.2,b2=0.2,hp=0.1,ba=ba_def,ha=ha_def,da=da_def,color='k',lw=1,zorder=z_def_arrow):
 	theta = find_angle(p1,p2)
-	L = find_length(p1,p2)
-	ts = np.array([b1*L,(1-b2)*L])
-	fs = np.array([h,h])
-	p1x,p1y = p1
-	xs,ys = rotate(p1,theta,ts+p1x,fs+p1y)
-	arrow(ax,(xs[0],ys[0]),(xs[1],ys[1]),ba,ha,lw,color)
+	L = find_length(p1,p2)-2*ha/3 #correction to have the arrow point be the end of the propagator if b2=0
+	pts = [numpyfy(p1) + [b1*L,hp],numpyfy(p1) + [(1-b2)*L,hp]]
+	p1a,p2a = rotate_points(p1,theta,pts)
+	arrow(ax,p1a,p2a,ba=ba,ha=ha,da=da,lw=lw,color=color,zorder=zorder)
 
-
-def arrow_momentum_arc(ax,p1,p2,h=0,b1=0.3,b2=0.3,H=0.2,ba=0.05,ha=0.05,lw=1,color='k',clockwise=False):
-	if clockwise:
-		p1,p2 = p2,p1
-
-	c = find_center(p1,p2,h)
-	cx,cy = c
-	theta1 = find_angle(c,p1)
-	theta2 = find_angle(c,p2)
-	if theta1>theta2:
-		theta2 = theta2 + 2*np.pi
+def arc(ax,p1,p2,dr=0,ts=0,fs=0,color='k',lw=1,ls='-',zorder=z_def_line,clockwise=False):
+	if clockwise: p1,p2 = p2,p1
+	c = find_center(p1,p2,dr)
+	theta1, theta2 = find_angles(c,p1,p2)
 	r = find_length(c,p1)
+	thetas = np.linspace(theta1,theta2,1000)
 
+	cx,cy = c
+	xs = cx + r*np.cos(thetas)+fs*np.cos(thetas)-ts*np.sin(thetas)
+	ys = cy + r*np.sin(thetas)+fs*np.sin(thetas)+ts*np.cos(thetas)
+
+	ax.plot(xs,ys,color=color,lw=lw,ls=ls,zorder=zorder)
+
+# Draw an arrow with pointy end over an arched propagator going from p1 to p2
+def arrow_momentum_arc(ax,p1,p2,dr=0,b1=0.3,b2=0.3,hp=0.2,ba=ba_def,ha=ha_def,da=da_def,color='k',lw=1,zorder=z_def_arrow,clockwise=False):
+	if clockwise:p1,p2 = p2,p1
+	c = find_center(p1,p2,dr)
+	r = find_length(c,p1)
+	theta1, theta2 = find_angles(c,p1,p2)
 	theta = (theta2-theta1)
-	theta1b = theta1+b1*theta
-	theta2b = theta2-b2*theta
+	theta1b,theta2b = theta1+b1*theta, theta2-b2*theta
 	thetas = np.linspace(theta1b,theta2b,1000)
-
-	xs = cx + (r+H)*np.cos(thetas)
-	ys = cy + (r+H)*np.sin(thetas)
-
+	
+	cx,cy = c
+	xs = cx + (r+hp)*np.cos(thetas)
+	ys = cy + (r+hp)*np.sin(thetas)
 	ax.plot(xs,ys,lw=lw,color=color)
 
-	phase = np.pi/2
-	theta_lim = theta2b
-	if clockwise:
-		theta_lim = theta1b
-		phase = 3*np.pi/2
-	p2b = (cx + (r+H)*np.cos(theta_lim),cy + (r+H)*np.sin(theta_lim))
-	arrow_triangle(ax,p2b,theta_lim+phase,ba,ha)
-
-def line(ax,p1,p2,color='k',lw=1,ls='-',**kwargs):
-	x1,y1 = p1
-	x2,y2 = p2
-	ax.plot([x1,x2], [y1,y2],ls=ls,color=color,lw=lw,**kwargs)
+	if clockwise:theta_lim, phase = theta1b, 3*np.pi/2
+	else: theta_lim, phase = theta2b, np.pi/2
+	p2b = (cx + (r+hp)*np.cos(theta_lim),cy + (r+hp)*np.sin(theta_lim))
+	arrow_triangle(ax,p2b,theta=theta_lim+phase,ba=ba,ha=ha,da=da,color=color,zorder=zorder)

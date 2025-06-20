@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.patches as mpatches
-from .geometry import find_angle, find_length, find_center, rotate
-from .basicdraw import arrow_triangle
-from .propagators import ts_fs_scalar,ts_fs_photon,ts_fs_gluon
+from .geometry import numpyfy, find_angle, find_angles, find_length, find_point, find_center, rotate, rotate_points
+from .basicdraw import arrow_triangle, arc, arc_arrow_triangle, ba_def, ha_def, da_def
+from .propagators import z_def_prop,ts_fs_scalar,dts_dfs_scalar,ts_fs_photon,dts_dfs_photon,ts_fs_gluon
 
 
 ########
@@ -10,45 +10,44 @@ from .propagators import ts_fs_scalar,ts_fs_photon,ts_fs_gluon
 ########
 
 # arc propagator from point p1 to p2 going counter clockwise
-# h is the distance between the "center" of the would-be circle and the straight line joining p1 to p2, and can be negative
-def parametric_arc(ax,p1,p2,h,dr,w,ls,lw,color,ts_fs):
-	c = find_center(p1,p2,h)
-	cx,cy = c
-	theta1 = find_angle(c,p1)
-	theta2 = find_angle(c,p2)
-	if theta1 >= theta2:
-		theta2 = theta2 + 2*np.pi
+# dr is the distance between the "center" of the would-be circle and the straight line joining p1 to p2, and can be negative
+def parametric_arc(ax,p1,p2,dr,ts_fs,h,w,color,lw,ls,hp=0,zorder=z_def_prop,clockwise=False):
+	c = find_center(p1,p2,dr)
 	r = find_length(c,p1)
-
+	theta1, theta2 = find_angles(c,p1,p2)
 	ts_init = np.linspace(0,r*np.abs(theta1-theta2),1000)
-	ts,fs = ts_fs(ts_init,dr,w)
-	thetas = np.linspace(theta1,theta2,1000)
-
-	xs = cx + r*np.cos(thetas)+fs*np.cos(thetas)-ts*np.sin(thetas)
-	ys = cy + r*np.sin(thetas)+fs*np.sin(thetas)+ts*np.cos(thetas)
-
-	ax.plot(xs, ys, ls=ls,lw=lw,color=color)
-
+	ts,fs = ts_fs(ts_init,h,w,hp=hp)
+	arc(ax,p1,p2,dr=dr,ts=ts,fs=fs,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
 	return c,r,theta1,theta2
 
-def scalar_arc(ax,p1,p2,h=0,ls='--',lw=1,color='k'):
-	parametric_arc(ax,p1,p2,h,0,0,ls,lw,color,ts_fs=ts_fs_scalar)
+def scalar_arc(ax,p1,p2,dr=0,color='k',lw=1,ls='--',arrw=False,bp=0.5,ba=ba_def,ha=ha_def,da=da_def,zorder=z_def_prop,clockwise=False,double=False):
+	if double:
+		hp = 0.01*lw
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=dts_dfs_scalar,h=0,w=0,hp=hp,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=dts_dfs_scalar,h=0,w=0,hp=-hp,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
+	else:
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=ts_fs_scalar,h=0,w=0,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
+	if arrw: arc_arrow_triangle(ax,p1,p2,dr=dr,bp=bp,ba=ba,ha=ha,da=da,color=color,zorder=zorder,clockwise=clockwise)
 
-def fermion_arc(ax,p1,p2,h=0,ls='-',lw=1,color='k',clockwise=False):
-	phase = np.pi/2
-	if clockwise:
-		p1,p2 = p2,p1
-		phase = 3*np.pi/2
-	c,r,theta1,theta2 = parametric_arc(ax,p1,p2,h,0,0,ls,lw,color,ts_fs=ts_fs_scalar)
-	p1x,p1y = p1
-	theta=(theta2-theta1)/2
-	arrow_triangle(ax,rotate(c,theta,p1x,p1y),phase+theta1+theta)
+def fermion_arc(ax,p1,p2,dr=0,color='k',lw=1,ls='-',arrw=True,bp=0.5,ba=ba_def,ha=ha_def,da=da_def,zorder=z_def_prop,clockwise=False,double=False):
+	if double:
+		hp = 0.01*lw
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=dts_dfs_scalar,h=0,w=0,hp=hp,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=dts_dfs_scalar,h=0,w=0,hp=-hp,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
+	else:
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=ts_fs_scalar,h=0,w=0,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
+	if arrw: arc_arrow_triangle(ax,p1,p2,dr=dr,bp=bp,ba=ba,ha=ha,da=da,color=color,zorder=zorder,clockwise=clockwise)
 
-def photon_arc(ax,p1,p2,h=0,dr=0.07,w=12,ls='-',lw=1,color='k'):
-	parametric_arc(ax,p1,p2,h,dr,w,ls,lw,color,ts_fs=ts_fs_photon)
+def photon_arc(ax,p1,p2,dr=0,h=0.07,w=12,color='k',lw=1,ls='-',zorder=z_def_prop,clockwise=False,double=False):
+	if double:
+		hp = 0.01*lw
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=dts_dfs_photon,h=h,w=w,hp=hp,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=dts_dfs_photon,h=h,w=w,hp=-hp,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
+	else:
+		parametric_arc(ax,p1,p2,dr=dr,ts_fs=ts_fs_photon,h=h,w=w,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
 
-def gluon_arc(ax,p1,p2,h=0,dr=0.07,w=12,ls='-',lw=1,color='k'):
-	parametric_arc(ax,p1,p2,h,dr,w,ls,lw,color,ts_fs=ts_fs_gluon)
+def gluon_arc(ax,p1,p2,dr=0,h=0.07,w=12,color='k',lw=1,ls='-',zorder=z_def_prop,clockwise=False):
+	parametric_arc(ax,p1,p2,dr=dr,ts_fs=ts_fs_gluon,h=0,w=0,color=color,lw=lw,ls=ls,zorder=zorder,clockwise=clockwise)
 
 
 ##############
@@ -57,20 +56,19 @@ def gluon_arc(ax,p1,p2,h=0,dr=0.07,w=12,ls='-',lw=1,color='k'):
 
 # loop propagator at center c and radius r
 # there are nP arrows, and the phase rotates them
-def line_loop(ax,c,r,nP=2,phase=0,color='k',lw=1,ls='-'):
-	ax.add_patch(mpatches.Circle(c,r,fill=False,ec='0',ls=ls,lw=lw,color=color))
+def line_loop(ax,c,r,nP=2,phase=0,color='k',lw=1,ls='-',ba=ba_def,ha=ha_def,da=da_def,zorder=z_def_prop,clockwise=False):
+	ax.add_patch(mpatches.Circle(c,r,fill=False,ec=color,ls=ls,lw=lw,zorder=zorder))
 	for i in range(nP):
-		cx,cy = c
 		theta = phase + i*2*np.pi/nP
-		arrow_triangle(ax,rotate(c,theta,cx,cy-r),theta)
+		pt = rotate_points(c,theta,numpyfy(c) + [0,-r])
+		arrow_triangle(ax,pt,theta=theta,ba=ba,ha=ha,da=da,color=color,zorder=zorder)
 
-def scalar_loop(ax,c,r,nS=0,phase=0,color='k',lw=1,ls='--'):
-	line_loop(ax,c,r,nS,phase,color,lw,ls=ls)
+def scalar_loop(ax,c,r,nS=0,ls='--',**kwargs):
+	line_loop(ax,c,r,nP=nS,ls=ls,**kwargs)
 
-def fermion_loop(ax,c,r,nF=2,phase=0,color='k',lw=1,ls='-'):
-	line_loop(ax,c,r,nF,phase,color,lw,ls=ls)
+def fermion_loop(ax,c,r,nF=2,ls='-',**kwargs):
+	line_loop(ax,c,r,nP=nF,ls=ls,**kwargs)
 
-def gluon_loop(ax,c,r,h=0,dr=0.07,w=12,ls='-',lw=1,color='k'):
-	cx,cy = c
-	p = (cx+r,cy)
-	gluon_arc(ax,p,p,r,dr,w,ls,lw,color)
+def gluon_loop(ax,c,r,dr=0,h=0.07,w=12,ls='-',lw=1,color='k',zorder=z_def_prop):
+	p = numpyfy(c) + [r,0]
+	gluon_arc(ax,p,p,dr=dr,h=0,w=0,color=color,lw=lw,ls=ls,zorder=z_def_prop)

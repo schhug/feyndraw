@@ -9,7 +9,7 @@ use('agg')
 rc('font',**{'family':'serif','serif':['Times']})
 rc('text',usetex=True)
 
-
+"""
 # Example 1
 # e- gamma to gamma' e- t-channel
 
@@ -454,7 +454,7 @@ ax.text(0, -r-0.15, r"$i\omega_n-i\omega_\ell, \vec{p} - \vec{k}$",color='k',fon
 fig.savefig("examples/example_13", bbox_inches='tight')
 plt.close(fig)
 
-
+"""
 # Example 14
 # tests
 fig = plt.figure(figsize=(8,3.5), dpi=600)
@@ -490,9 +490,10 @@ gluon_propagator(ax,rotate((3.5,0),np.pi/3,3.5+0.5,0),rotate((3.5,0),np.pi/3,3.5
 scalar_propagator(ax,rotate((3.5,0),-np.pi/3,3.5+0.5,0),rotate((3.5,0),-np.pi/3,3.5+2,0))
 arrow_momentum(ax,rotate((3.5,0),-np.pi/3,3.5+0.5,0),rotate((3.5,0),-np.pi/3,3.5+2,0),h=0.2)
 
-arrow(ax,(0.3,-0.3),(2.6,-0.3),b=0.03)
+arrow(ax,(0.3,-0.3),(2.6,-0.3),ba=0.03)
 
 gluon_loop(ax,rotate((3.5,0),np.pi/3,3.5+1.35+0.6,0),0.5,w=14)
 
 fig.savefig("examples/example_14", bbox_inches='tight')
 plt.close(fig)
+

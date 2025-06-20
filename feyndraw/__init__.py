@@ -5,6 +5,7 @@ Version 1.0
 2024-06-01
 """
 
+import numpy as np
 import matplotlib.pyplot as plt
 from .geometry import find_angle, find_length, find_center, rotate
 from .basicdraw import arrow_triangle,arrow,arrow_momentum,arrow_momentum_arc,line
@@ -15,6 +16,7 @@ from .vertices import blob,oscillation_x
 def init_ax(ax):
 	ax.axis("off")
 	ax.set_aspect('equal', adjustable='box')
+	ax.plot(0,0,'ro',alpha=0)  # Add a dummy point to avoid bugs from no data in the plot
 
 def init_fig_ax(*args, **kwargs):
 	fig = plt.figure(*args, **kwargs)
