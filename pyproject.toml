@@ -17,7 +17,7 @@ description = "Drawing Feynman diagrams with matplotlib"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICEN[CS]E.*"]
-keywords = ["Feynman", "diagram", "draq", "physics", "particle"]
+keywords = ["Feynman", "diagram", "draw", "physics", "particle"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Operating System :: OS Independent",
