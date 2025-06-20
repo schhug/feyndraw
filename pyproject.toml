@@ -1,9 +1,9 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling >= 1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "FeynDraw"
+name = "feyndraw"
 version = "1.0"
 dependencies = [
     "matplotlib",
@@ -19,8 +19,9 @@ license = "MIT"
 license-files = ["LICEN[CS]E.*"]
 keywords = ["Feynman", "diagram", "draq", "physics", "particle"]
 classifiers = [
-  "Programming Language :: Python"
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
 ]
 
 [project.urls]
-Repository = "https://github.com/yourusername/drawstuff"
+Repository = "https://github.com/schhug/feyndraw"
