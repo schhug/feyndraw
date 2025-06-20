@@ -67,6 +67,7 @@ def gs_photon(t,h,w):
 def gs_scalar(ts_init,h,w):
 	return 0
 
+# ts, fs for double propagators
 def dts_dfs(ts_init,h,w,hp,gs):
 	prefactors = hp/np.sqrt(1 + (gs(ts_init,h,w))**2)
 	dts = prefactors*gs(ts_init,h,w)
