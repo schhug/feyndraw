@@ -1,0 +1,1 @@
+Instead of providing detailes documentation, there is an example.py file and comments 

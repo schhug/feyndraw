@@ -13,10 +13,7 @@ i=0
 
 # e- gamma to gamma' e- t-channel
 i+=1
-fig = plt.figure(figsize=(8,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
-
+fig,ax = init_fig_ax(figsize=(8,3.5), dpi=600)
 
 d=0.5
 h=0.2
@@ -103,10 +100,7 @@ plt.close(fig)
 
 # e+ gamma to gamma' e+ t-channel
 i+=1
-
-fig = plt.figure(figsize=(8,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(8,3.5), dpi=600)
 
 
 d=0.5
@@ -151,9 +145,7 @@ plt.close(fig)
 # e+ gamma to gamma' e+ s-channel
 i+=1
 
-fig = plt.figure(figsize=(8,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(8,3.5), dpi=600)
 
 
 d=0.5
@@ -198,9 +190,7 @@ plt.close(fig)
 
 i+=1
 
-fig = plt.figure(figsize=(8,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(8,3.5), dpi=600)
 
 
 d=0.5
@@ -244,9 +234,7 @@ plt.close(fig)
 # e+e- to gamma gamma' u-channel
 i+=1
 
-fig = plt.figure(figsize=(8,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(8,3.5), dpi=600)
 
 
 d=0.5
@@ -291,9 +279,7 @@ plt.close(fig)
 # fermion self-energy
 i+=1
 
-fig = plt.figure(figsize=(8,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(8,3.5), dpi=600)
 
 
 fermion_propagator(ax,(-1.5,0),(-0.5,0))
@@ -308,9 +294,7 @@ plt.close(fig)
 # fermion self-energy re-summed
 i+=1
 
-fig = plt.figure(figsize=(8,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(8,3.5), dpi=600)
 
 
 fermion_propagator(ax,(-1.5,0),(-0.5,0),double=True)
@@ -325,9 +309,7 @@ plt.close(fig)
 # initial-final to dark photon
 i+=1
 
-fig = plt.figure(figsize=(6,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(6,3.5), dpi=600)
 
 
 photon_propagator(ax,(0,0),(3,0))
@@ -354,9 +336,7 @@ plt.close(fig)
 # initial-final to dark photon
 i+=1
 
-fig = plt.figure(figsize=(6,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(6,3.5), dpi=600)
 
 
 photon_propagator(ax,(0,0),(3,0))
@@ -383,9 +363,7 @@ plt.close(fig)
 
 # initial-final to dark photon for CRAQ 2 (circled)
 i+=1
-fig = plt.figure(figsize=(6,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(6,3.5), dpi=600)
 
 
 photon_propagator(ax,(0,0),(3,0))
@@ -413,9 +391,7 @@ plt.close(fig)
 
 # Self-energy photon
 i+=1
-fig = plt.figure(figsize=(6,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(6,3.5), dpi=600)
 
 
 r=0.7
@@ -437,9 +413,7 @@ plt.close(fig)
 
 # Self-energy photon BIS
 i+=1
-fig = plt.figure(figsize=(2,1), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(2,1), dpi=600)
 
 
 r=0.7
@@ -462,9 +436,7 @@ plt.close(fig)
 
 # Self-energy scalar
 i+=1
-fig = plt.figure(figsize=(6,3.5), dpi=600)
-ax = fig.subplots()
-init_ax(ax)
+fig,ax = init_fig_ax(figsize=(6,3.5), dpi=600)
 
 
 r=0.7
@@ -493,8 +465,6 @@ fig = plt.figure(figsize=(8,3.5), dpi=600)
 ax = fig.subplots()
 init_ax(ax)
 
-
-
 fermion_propagator(ax,(-5,-1),(-4,-1))
 fermion_arc(ax,(-4,-1),(-3,-1),clockwise=True)
 photon_propagator(ax,(-4,-1),(-3,-1))
@@ -509,7 +479,7 @@ fermion_arc(ax,(-3,1),(-4,1))
 gluon_propagator(ax,(-4,1-d),(-3,1-d),w=12)
 fermion_propagator(ax,(0,0),(-1,1))
 fermion_propagator(ax,(-1,1),(-3,1))
-gluon_arc(ax,(-1.5,1),(-2.5,1),0.0443)
+gluon_arc(ax,(-1.5,1),(-2.5,1),dr=0.0443)
 arrow_momentum_arc(ax,(-2.5,1),(-1.5,1),0,clockwise=True)
 
 photon_propagator(ax,(0,0),(3,0))
@@ -524,7 +494,7 @@ arrow_momentum(ax,rotate((3.5,0),-np.pi/3,3.5+0.5,0),rotate((3.5,0),-np.pi/3,3.5
 
 arrow(ax,(0.3,-0.3),(2.6,-0.3),ba=0.03)
 
-gluon_loop(ax,rotate((3.5,0),np.pi/3,3.5+1.35+0.6,0),0.5,w=14)
+gluon_loop(ax,rotate((3.5,0),np.pi/3,3.5+1.35+0.6,0),r=0.5,w=14)
 
 fig.savefig(f"examples/example_{i:0=2d}".format(i=i), bbox_inches='tight')
 plt.close(fig)

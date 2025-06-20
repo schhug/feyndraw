@@ -1,9 +1,6 @@
 import numpy as np
 import matplotlib.patches as mpatches
 
-# General comments
-#    points are in the format [x,y]
-
 # Transform a point [x,y] or (x,y) to a numpy array
 def numpyfy(a):
 	return np.array(a)
