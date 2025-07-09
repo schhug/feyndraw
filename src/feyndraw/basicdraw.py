@@ -54,7 +54,7 @@ def arrow(ax,p1,p2,ba=ba_def,ha=ha_def,da=da_def,color='k',lw=1,zorder=z_def_arr
 	x1,y1 = p1
 	x2,y2 = p2
 	theta = find_angle(p1,p2)
-	line(ax,p1,p2,color='k',lw=lw,zorder=zorder)
+	line(ax,p1,p2,color=color,lw=lw,zorder=zorder)
 	arrow_triangle(ax,p2,theta=theta,ba=ba,ha=ha,da=da,color=color,zorder=zorder)
 
 # Draw an arrow with pointy end over a linear propagator going from p1 to p2

@@ -345,7 +345,7 @@ fermion_propagator(ax,(0,0),(-1,1))
 oscillation_x(ax,(1.5,0))
 blob(ax,(0,0))
 
-arrow(ax,(0.3,-0.3),(2.6,-0.3),ba=0.03)
+arrow(ax,(0.3,-0.3),(2.6,-0.3),ba=0.06)
 ax.text(1.5, -0.4, r"$\omega,k$",color='k',fontsize=20,va='top',ha='center')
 
 ax.text(-0.7, -0.8, r"initial",color='k',fontsize=20,va='top',ha='left')
@@ -372,7 +372,7 @@ fermion_propagator(ax,(0,0),(-1,1))
 oscillation_x(ax,(1.5,0))
 blob(ax,(0,0))
 
-arrow(ax,(0.3,-0.3),(2.6,-0.3),ba=0.03)
+arrow(ax,(0.3,-0.3),(2.6,-0.3),ba=0.06)
 ax.text(1.5, -0.4, r"$\omega,k$",color='k',fontsize=20,va='top',ha='center')
 
 ax.text(-0.7, -0.8, r"initial",color='k',fontsize=20,va='top',ha='left')
