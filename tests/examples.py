@@ -9,6 +9,8 @@ use('agg')
 rc('font',**{'family':'serif','serif':['Times']})
 rc('text',usetex=True)
 
+info()
+
 i=0
 
 # e- gamma to gamma' e- t-channel
@@ -457,6 +459,159 @@ ax.text(0, -r-0.15, r"$i\omega_n-i\omega_\ell, \vec{p} - \vec{k}$",color='k',fon
 fig.savefig(f"examples/example_{i:0=2d}".format(i=i), bbox_inches='tight')
 plt.close(fig)
 
+# 2 to 2 with grid
+i+=1
+def plot_small_fermions(process, p = ['f','s','f','f','b']):
+    def my_photon_propagator(ax, pt1, pt2, **kwargs):
+        photon_propagator(ax, pt1, pt2,h=0.09,w=8, **kwargs)
+    propagator = { 'f': fermion_propagator, 'fb': antifermion_propagator, 's': scalar_propagator, 'b': my_photon_propagator }
+
+    fig,ax = init_fig_ax(figsize=(0.7,0.7), dpi=500)
+
+    if process == '2to2s' or process == '2to2t':
+        mandel = process[-1]
+        dx,dy = 1,1
+        pt1,pt2,pt3,pt4 = [-dx,dy],[-dx,-dy],[dx,dy],[dx,-dy]
+
+        if mandel == 's':
+            ds = 0.5
+            pp1,pp2 = [-ds,0],[ds,0]
+            pt1a,pt2a,pt3a,pt4a = pp1,pp1,pp2,pp2
+
+        elif mandel == 't':
+            dt = 0.5
+            pp1,pp2 = [0,dt],[0,-dt]
+            pt1a,pt2a,pt3a,pt4a = pp1,pp2,pp1,pp2
+
+    elif process == '1to3' or process == '3to1' or process == '3to1f':
+        dx1 = 1
+        dx,dy = 0.7,0.7
+
+        pt1,pt2,pt3,pt4 = [-dx1,0],[2*dx,2*dy],[2*dx,0],[2*dx,-2*dy]
+        pp1,pp2 = [0,0],[dx,dy]
+        pt1a,pt2a,pt3a,pt4a = pp1,pp2,pp2,pp1
+
+        if process == '3to1':
+            pt1,pt2,pt3,pt4     = pt2 ,pt3 ,pt4 ,pt1
+            pt1a,pt2a,pt3a,pt4a = pt2a,pt3a,pt4a,pt1a
+            for pt in [pp1,pp2,pt1,pt2,pt3,pt4,pt1a,pt2a,pt3a,pt4a]:
+                pt[0] = -pt[0]
+
+        if process == '3to1f':
+            pt1,pt2,pt3,pt4     = pt4 ,pt3 ,pt2 ,pt1
+            pt1a,pt2a,pt3a,pt4a = pt4a,pt3a,pt2a,pt1a
+            for pt in [pp1,pp2,pt1,pt2,pt3,pt4,pt1a,pt2a,pt3a,pt4a]:
+                pt[0],pt[1] = -pt[0],-pt[1]
+
+    elif process == '4to0':
+        dx,dy = 1.1,0.2
+        dt = 0.4
+
+        pt1,pt2,pt3,pt4 = [-dx,dt+dy],[-dx,dt-dy],[-dx,-dt+dy],[-dx,-dt-dy]
+        pp1,pp2 = [0,dt],[0,-dt]
+        pt1a,pt2a,pt3a,pt4a = pp1,pp1,pp2,pp2
+
+    show_grid(ax)
+
+    propagator[p[0]](ax,pp1,pp2) # prop
+    propagator[p[1]](ax,pt1,pt1a) # particle 1
+    propagator[p[2]](ax,pt2,pt2a) # particle 2
+    propagator[p[3]](ax,pt3a,pt3) # particle 3
+    propagator[p[4]](ax,pt4a,pt4) # particle 4
+
+    fig.savefig(f"examples/example_{i:0=2d}".format(i=i), bbox_inches='tight')
+    plt.close(fig)
+
+plot_small_fermions('2to2t', p = ['fb','s','b','f','fb'])
+
+
+# Interference diagrams
+def plot_small_intf_term(ax,spec,cx=0):
+    color_asym = "#FB9E3A"
+    r=0.35
+    theta_cut = 0
+    text_fs = 12
+    text_fs2 = 9
+    lw = 1.3
+
+    cut_r,d = 0.5,0.1
+    cut_ls,cut_lw = '--',1.5
+    color_spec = 'orange'
+    color_spec = color_asym
+
+    if spec == 'fermion':
+        spec_propagator = fermion_propagator
+        anti_spec_propagator = photon_propagator
+        spec_text = r"$f$"
+    elif spec == 'photon':
+        spec_propagator = photon_propagator
+        anti_spec_propagator = fermion_propagator
+        spec_text = r"$\gamma$"
+
+    # o-cross
+    r = 0.07
+    fermion_loop(ax,(cx,0),r=2*r,nF=0,phase=0,color='k',lw=1) #abuse of fermion_loop to draw a circle
+    oscillation_x(ax,(cx,0),b=1.1*r,lw=1.5) #abuse of oscillation_x to draw ax
+
+
+    b = 0.45 #spacing between the two sides
+    a = 0.8 #vertical spacing
+    dy = 0.65
+    dx = 0.65
+    dL = 0.55
+
+    # Left side
+    pt1L = np.array([-dx-dL-b+cx,-a+dL])
+    pt2L = pt1L + [dx,0]
+    pt3L = pt2L + [dL,+dL]
+    pt4L = pt2L + [dL,-dL]
+    ptS1L = pt1L + [0,2*a-dL]
+    ptS2L = ptS1L + [dx+dL-0.1,0]
+
+    photon_propagator(ax,pt2L,pt1L,lw=lw)
+    fermion_propagator(ax,pt2L,pt3L,lw=lw)
+    fermion_propagator(ax,pt4L,pt2L,lw=lw)
+
+    ax.text(pt1L[0]+0.3, pt1L[1]+0.1, r"$A'$",color='k',fontsize=text_fs,va='bottom',ha='center')
+    ax.text(pt4L[0]+0.05, pt4L[1], r"$f$",color='k',fontsize=text_fs,va='center',ha='left')
+    ax.text(pt3L[0]+0.05, pt3L[1], r"$f$",color='k',fontsize=text_fs,va='center',ha='left')
+
+    spec_propagator(ax,ptS1L,ptS2L,lw=lw,color=color_spec)
+    ax.text((ptS1L[0]+ptS2L[0])/2, (ptS1L[1]+ptS2L[1])/2+0.15, spec_text, color=color_spec,fontsize=text_fs,va='bottom',ha='center')
+
+
+    # Right side
+    pt1R  = np.array([b+cx,-dy])
+    pt2R  = pt1R  + [dx,0]
+    pt4R  = pt2R  + [dx,0]
+    pt2aR = pt2R  + [0,dy]
+    pt2bR = pt2aR + [0,dy]
+    pt3R  = pt2bR + [dx,0]
+    ptS1R = pt2bR + [-dx,0]
+    ptS2R = pt2aR + [dx,0]
+
+    photon_propagator(ax,pt1R,pt2R,lw=lw)
+    fermion_propagator(ax,pt4R,pt2R,lw=lw)
+    fermion_propagator(ax,pt2R,pt2aR,lw=lw)
+    fermion_propagator(ax,pt2bR,pt3R,lw=lw)
+
+    ax.text(pt1R[0], pt1R[1]+0.1, r"$A'$",color='k',fontsize=text_fs,va='bottom',ha='center')
+    ax.text(pt4R[0]+0.05, pt4R[1], r"$f$",color='k',fontsize=text_fs,va='center',ha='left')
+    ax.text(pt3R[0]+0.05, pt3R[1], r"$f$",color='k',fontsize=text_fs,va='center',ha='left')
+
+    anti_spec_propagator(ax,pt2aR,pt2bR,lw=lw)
+    spec_propagator(ax,ptS1R,pt2bR,lw=lw,color=color_spec)
+    spec_propagator(ax,pt2aR,ptS2R,lw=lw,color=color_spec)
+    ax.text(ptS1R[0], ptS1R[1]+0.1, spec_text, color=color_spec,fontsize=text_fs,va='bottom',ha='right')
+    ax.text(ptS2R[0]+0.05, ptS2R[1], spec_text, color=color_spec,fontsize=text_fs,va='center',ha='left')
+
+for spec in ['fermion','photon']:
+    fig,ax = init_fig_ax(figsize=(2.5,3), dpi=300)
+    plot_small_intf_term(ax,spec,cx=0)
+    i+=1
+    fig.savefig(f"examples/example_{i:0=2d}".format(i=i), bbox_inches='tight')
+    plt.close(fig)
+
 
 
 # tests
@@ -498,4 +653,7 @@ gluon_loop(ax,rotate((3.5,0),np.pi/3,3.5+1.35+0.6,0),r=0.5,w=14)
 
 fig.savefig(f"examples/example_{i:0=2d}".format(i=i), bbox_inches='tight')
 plt.close(fig)
+
+
+
 

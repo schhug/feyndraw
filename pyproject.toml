@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "feyndraw"
-version = "1.0.2"
+version = "1.1"
 dependencies = [
     "matplotlib",
     "numpy"
@@ -24,4 +24,6 @@ classifiers = [
 ]
 
 [project.urls]
+Repository = "https://doi.org/10.5281/zenodo.16100536"
 Repository = "https://github.com/schhug/feyndraw"
+
